@@ -1,8 +1,11 @@
 package br.com.exemplo.springboot.entities;
+import br.com.exemplo.springboot.domain.ClientDto;
 import br.com.exemplo.springboot.enums.Gender;
 import br.com.exemplo.springboot.util.converter.GenderConverter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,6 +17,8 @@ import java.util.Objects;
 public class Client implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq_gen")
+    @SequenceGenerator(name = "users_seq_gen", sequenceName = "users_id_seq")
     @Column(name = "ID")
     private Long id;
 
@@ -25,6 +30,11 @@ public class Client implements Serializable {
     private Gender gender;
 
     public Client() {
+    }
+
+    public Client(String name, Gender gender) {
+        this.name = name;
+        this.gender = gender;
     }
 
     public Client(Long id, String name, Gender gender) {

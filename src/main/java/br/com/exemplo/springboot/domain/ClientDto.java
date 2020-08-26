@@ -3,6 +3,8 @@ package br.com.exemplo.springboot.domain;
 import br.com.exemplo.springboot.enums.Gender;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 public class ClientDto {
 
     @JsonProperty
@@ -43,5 +45,29 @@ public class ClientDto {
 
     public void setGender(Gender gender) {
         this.gender = gender;
+    }
+
+    @Override
+    public String toString() {
+        return "ClientDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", gender=" + gender +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClientDto clientDto = (ClientDto) o;
+        return Objects.equals(id, clientDto.id) &&
+                Objects.equals(name, clientDto.name) &&
+                gender == clientDto.gender;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
