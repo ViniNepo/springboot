@@ -4,6 +4,7 @@ import br.com.exemplo.springboot.domain.ClientDto;
 import br.com.exemplo.springboot.entities.Client;
 import br.com.exemplo.springboot.enums.Gender;
 import br.com.exemplo.springboot.repository.ClientRepository;
+import javassist.NotFoundException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
@@ -60,7 +61,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    public void getByIdTest() {
+    public void getByIdTest() throws NotFoundException {
         ReflectionTestUtils.setField(clientService, "modelMapper", new ModelMapper());
 
         Optional<Client> client = Optional.of(new Client(1L, "teste", Gender.MALE));
@@ -77,7 +78,7 @@ public class ClientServiceTest {
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void getByIdTest_NullId() {
+    public void getByIdTest_NullId() throws NotFoundException {
         ReflectionTestUtils.setField(clientService, "modelMapper", new ModelMapper());
 
         Optional<Client> client = Optional.of(new Client(1L, "teste", Gender.MALE));
@@ -94,7 +95,7 @@ public class ClientServiceTest {
     }
 
     @Test(expectedExceptions = NoSuchElementException.class)
-    public void getByIdTest_DifferentId() {
+    public void getByIdTest_DifferentId() throws NotFoundException {
         ReflectionTestUtils.setField(clientService, "modelMapper", new ModelMapper());
 
         Optional<Client> client = Optional.of(new Client(1L, "teste", Gender.MALE));
@@ -189,7 +190,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    public void deleteTest() {
+    public void deleteTest() throws NotFoundException {
         ReflectionTestUtils.setField(clientService, "modelMapper", new ModelMapper());
 
         Optional<Client> client = Optional.of(new Client(1L, "teste", Gender.MALE));
@@ -214,7 +215,7 @@ public class ClientServiceTest {
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void deleteTest_NullId() {
+    public void deleteTest_NullId() throws NotFoundException {
         ReflectionTestUtils.setField(clientService, "modelMapper", new ModelMapper());
 
         Optional<Client> client = Optional.of(new Client(1L, "teste", Gender.MALE));

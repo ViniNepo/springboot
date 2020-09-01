@@ -3,6 +3,7 @@ package br.com.exemplo.springboot.service;
 import br.com.exemplo.springboot.domain.ClientDto;
 import br.com.exemplo.springboot.entities.Client;
 import br.com.exemplo.springboot.repository.ClientRepository;
+import javassist.NotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,13 +30,13 @@ public class ClientService {
                 .collect(Collectors.toList());
     }
 
-    public ClientDto get(Long id) {
+    public ClientDto get(Long id) throws NotFoundException {
         if(id == null) {
             throw new NullPointerException("O id está vazio");
         }
 
         Optional<Client> client = repository.findById(id);
-        return convertToDto(client.get());
+        return convertToDto(client.orElseThrow(() -> new NotFoundException("client not found")));
     }
 
     public List<ClientDto> getByName(String name) {

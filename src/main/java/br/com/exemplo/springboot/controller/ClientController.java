@@ -1,13 +1,17 @@
 package br.com.exemplo.springboot.controller;
 
+import br.com.exemplo.springboot.apiException.ApiErrors;
 import br.com.exemplo.springboot.domain.ClientDto;
 
-import br.com.exemplo.springboot.entities.Client;
 import br.com.exemplo.springboot.service.ClientService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -29,7 +33,13 @@ public class ClientController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<ClientDto> get(@PathVariable(value = "id") Long id) {
-        return ResponseEntity.ok(this.service.get(id));
+        try {
+            return ResponseEntity.ok(this.service.get(id));
+        }catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }catch (NullPointerException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping(path = "/name")
@@ -39,7 +49,11 @@ public class ClientController {
 
     @PostMapping
     public ResponseEntity<ClientDto> save(@RequestBody ClientDto dto) throws ParseException {
-        return new ResponseEntity<>(this.service.save(dto), CREATED);
+        try {
+            return new ResponseEntity<>(this.service.save(dto), CREATED);
+        } catch (NullPointerException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping

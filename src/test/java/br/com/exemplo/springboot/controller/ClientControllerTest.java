@@ -5,6 +5,7 @@ import br.com.exemplo.springboot.entities.Client;
 import br.com.exemplo.springboot.enums.Gender;
 import br.com.exemplo.springboot.service.ClientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
@@ -65,27 +67,6 @@ public class ClientControllerTest extends AbstractTestNGSpringContextTests {
         verify(clientService).get();
     }
 
-    @Test
-    public void get_NotFoundTest() throws Exception {
-//
-//        when(clientService.get()).thenThrow();
-//
-//        mvc.perform(get("/clients")
-//                .contentType(APPLICATION_JSON))
-//                .andExpect(status().isNotFound());
-//
-//        verify(clientService).get();
-    }
-
-//    @Test
-//    public void getClubIdUnprocessableEntityTest() throws Exception {
-//        when(customerService.getClubId(anyLong())).thenThrow(new UnprocessableEntityException());
-//        mvc.perform(get(PROFILES_CLUB_ID)
-//                .headers(httpHeaders)
-//                .accept(APPLICATION_JSON_UTF8_VALUE))
-//                .andExpect(status().isUnprocessableEntity());
-//        verify(customerService).getClubId(anyLong());
-//    }
 
     @Test
     public void getByIdTeste() throws Exception {
@@ -96,6 +77,19 @@ public class ClientControllerTest extends AbstractTestNGSpringContextTests {
         mvc.perform(get("/clients/{id}", id)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk());
+
+        verify(clientService).get(id);
+    }
+
+    @Test
+    public void getById_NOT_FOUND_Teste() throws Exception {
+        long id = anyLong();
+
+        when(clientService.get(id)).thenThrow(new NotFoundException("client not found"));
+
+        mvc.perform(get("/clients/{id}", id)
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound());
 
         verify(clientService).get(id);
     }
@@ -125,6 +119,20 @@ public class ClientControllerTest extends AbstractTestNGSpringContextTests {
                 .andExpect(status().isCreated());
 
         verify(clientService).save(clientDto);
+    }
+
+    @Test
+    public void save_NOT_CONTENT_Test() throws Exception {
+        ClientDto clientDto = null;
+
+        when(clientService.save(new ClientDto())).thenThrow(new NullPointerException("mano vazio"));
+
+        mvc.perform(post("/clients")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(null)))
+                .andExpect(status().isBadRequest());
+
+        verify(clientService).save(new ClientDto());
     }
 
     @Test
