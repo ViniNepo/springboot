@@ -20,9 +20,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.testng.Assert.*;
-
 import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
 
 public class ClientServiceTest {
 
