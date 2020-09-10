@@ -93,7 +93,7 @@ public class ClientServiceTest {
         assertEquals(clientDto.getGender(), client.get().getGender());
     }
 
-    @Test(expectedExceptions = NoSuchElementException.class)
+    @Test(expectedExceptions = NotFoundException.class)
     public void getByIdTest_DifferentId() throws NotFoundException {
         ReflectionTestUtils.setField(clientService, "modelMapper", new ModelMapper());
 

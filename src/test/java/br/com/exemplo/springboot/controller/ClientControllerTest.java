@@ -5,6 +5,7 @@ import br.com.exemplo.springboot.enums.Gender;
 import br.com.exemplo.springboot.service.ClientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -65,7 +67,7 @@ public class ClientControllerTest extends AbstractTestNGSpringContextTests {
 
 
     @Test
-    public void getByIdTeste() throws Exception {
+    public void getByIdTest() throws Exception {
         long id = anyLong();
 
         when(clientService.get(id)).thenReturn(clients.get(0));
@@ -78,14 +80,29 @@ public class ClientControllerTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void getById_NOT_FOUND_Teste() throws Exception {
+    public void getById_NOT_FOUND_Test() throws Exception {
         long id = anyLong();
 
         when(clientService.get(id)).thenThrow(new NotFoundException("client not found"));
 
         mvc.perform(get("/clients/{id}", id)
                 .contentType(APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("errors").value("client not found"));
+
+        verify(clientService).get(id);
+    }
+
+    @Test
+    public void getById_NULL_POINTER_Test() throws Exception {
+        long id = anyLong();
+
+        when(clientService.get(id)).thenThrow(new NullPointerException("O id está vazio"));
+
+        mvc.perform(get("/clients/{id}", id)
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors").value("O id está vazio"));
 
         verify(clientService).get(id);
     }
@@ -95,6 +112,20 @@ public class ClientControllerTest extends AbstractTestNGSpringContextTests {
         String name = "vinicius";
 
         when(clientService.getByName(name)).thenReturn(clients);
+
+        mvc.perform(get("/clients/name?name={name}", name)
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(clientService).getByName(name);
+    }
+
+    @Test
+    @DisplayName("nao deve achar um client com o  parametro vazio")
+    public void getByNameNullPointerTest() throws Exception {
+        String name = "vinicius";
+
+        when(clientService.getByName(name)).thenReturn(null);
 
         mvc.perform(get("/clients/name?name={name}", name)
                 .contentType(APPLICATION_JSON))
