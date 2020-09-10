@@ -27,9 +27,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -170,15 +168,16 @@ public class ClientControllerTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testUpdate() throws Exception {
-//        ClientDto clientDto = new ClientDto(1L, "Maria", Gender.FEMALE);
-//
-//        when(clientService.save(clientDto)).thenReturn(clientDto);
-//
-//        mvc.perform(put("/clients/1")
-//                .contentType(APPLICATION_JSON)
-//                .content(objectMapper.writeValueAsString(clientDto)))
-//                .andExpect(status().isOk());
-//
+        Long id = 1L;
+        ClientDto clientDto = new ClientDto(1L, "Maria", Gender.FEMALE);
+
+        when(clientService.update(id, clientDto)).thenReturn(clientDto);
+
+        mvc.perform(put("/clients/{id}", id)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(clientDto)))
+                .andExpect(status().isOk());
+
 //        verify(clientService).save(clientDto);
     }
 

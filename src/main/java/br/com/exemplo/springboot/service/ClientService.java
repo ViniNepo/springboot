@@ -60,11 +60,11 @@ public class ClientService {
     }
 
     public ClientDto update(Long id, ClientDto dto) throws ParseException {
-        if(dto == null) {
-            throw new NullPointerException("O DTO está vazio");
-        }
         if(id == null) {
             throw new NullPointerException("O id está vazio");
+        }
+        if(!repository.existsById(id)){
+            throw new NullPointerException("O mano nao existe");
         }
 
         Client client = repository.findById(id).get();

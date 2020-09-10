@@ -46,8 +46,8 @@ public class ClientController {
     }
 
     @PutMapping
-    public ResponseEntity<ClientDto> update(@RequestBody ClientDto dto) throws ParseException {
-        return new ResponseEntity<>(this.service.save(dto), OK);
+    public ResponseEntity<ClientDto> update(@PathVariable(value = "id") Long id, @RequestBody ClientDto dto) throws ParseException {
+        return new ResponseEntity<>(this.service.update(id, dto), OK);
     }
 
     @DeleteMapping(path = "/{id}")
